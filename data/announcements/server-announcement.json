@@ -1,0 +1,9 @@
+{
+  "id": "server-announcement",
+  "date": "2026-08-21",
+  "title": "服务器公告",
+  "sticky": true,
+  "showOnHome": true,
+  "content": "欢迎来到IDDの小窝，祝你玩的开心喵\n香草纪元:食旅纪行 v2.7.1整合包\n第1周目 🎉\n\n服务器采用Littleskin皮肤站登录（https://littleskin.cn/?lang=zh_CN）\n\n服务器已安装Netmusic，可以自己点歌，接受网易云音乐所有免费歌曲和黑胶VIP歌曲（需安装网络音乐机：更好的登录Net Music: Better Login——https://www.mcmod.cn/class/25763.html）\n指令开头是/netmusic\n网易云音乐黑胶会员由腐竹提供\n\n以下是樱花FRP线路（VIP线路）：\n浙江宁波专线：frp-sun.com:31067\n湖北专线：frp-day.com:59452\n枣庄专线：frp-ten.com:11010\n香港专线：frp-fit.com:27251\n备用线路（上海节点，阿里云自建FRP）：139.196.54.254\n\n常用工具（均来自官方源/可信任镜像源）：\nPCL2（密码pcl2）：https://ltcat.lanzouv.com/b0aj6gsid\nHMCL（挑选后缀.exe文件下载）：https://cnb.cool/HMCL-dev/HMCL/-/releases\nJava21（OpenJDK，清华大学镜像源）：https://mirrors.tuna.tsinghua.edu.cn/Adoptium/21/jdk/x64/windows/OpenJDK21U-jdk_x64_windows_hotspot_21.0.12_8.msi\n香草纪元BBSMC论坛介绍页（https://bbsmc.net/modpack/vefc）\n下载地址：（夸克）https://pan.quark.cn/s/cfbc88350339#/list/share\n（阿里云自建网盘）https://pan.doctoridd.net/\n\nPS：\n1.原清华源JDK下载不可用，现已更新为新可用源\n2.mcpatch自动更新器后续会发一份新的包\n3.Littleskin注册账号后还需要验证邮箱，登陆后请检查仪表盘页面的提示\n4.Littleskin如何应用在启动器？：在版本设置→设置→服务器→登录方式改为“第三方登录Authlib Injector 或 Littleskin，并且把图示卡片直接拖进启动器，再回到主界面填入账密",
+  "images": []
+}

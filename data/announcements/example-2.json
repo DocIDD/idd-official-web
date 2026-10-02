@@ -1,0 +1,9 @@
+{
+  "id": "example-2",
+  "date": "2026-08-01",
+  "title": "示例公告二",
+  "sticky": false,
+  "showOnHome": true,
+  "content": "第二条公告占位内容。",
+  "images": []
+}

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DoctorIDD · Minecraft 服务器官网</title>
+  <meta name="description" content="DoctorIDD Minecraft 服务器官网，服务器信息、成员、项目与规则。" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="icon" type="image/png" sizes="64x64" href="/assets/images/logo-thumb.png" />
+  <link rel="stylesheet" href="/assets/css/style.css?v=20261002" />
+</head>
+<body data-page="home">
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="site-brand" href="/"><span id="site-brand">DoctorIDD</span></a>
+      <nav class="site-nav" id="site-nav" aria-label="主导航">
+        <a href="/#about">介绍</a>
+        <a href="/#announcements">公告</a>
+        <a href="/#members">成员</a>
+        <a href="/#projects">项目</a>
+        <a href="/#rules">规则</a>
+        <a href="/plugins/">组件</a>
+        <a href="/changelog/">更新历史</a>
+      </nav>
+      <div class="site-header__actions">
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换深色模式">🌙</button>
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="hero">
+      <div class="hero__inner">
+        <p class="hero__eyebrow font-mono">MINECRAFT · OUR LITTLE WORLD</p>
+        <div class="hero__logo">
+          <img src="/logo.png" alt="DoctorIDD Logo" width="120" height="120" fetchpriority="high" />
+        </div>
+        <h1 class="hero__title" id="hero-title">DoctorIDD</h1>
+        <p class="hero__slogan" id="hero-slogan">欢迎来到 IDDの小窝</p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#about">了解服务器</a>
+          <a class="btn btn--ghost" href="#projects">查看项目</a> 
+        </div>
+      </div>
+      <p class="hero__hint" aria-hidden="true">↓ SCROLL</p>
+    </section>
+
+    <section class="section section--about" id="about">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow">// 01 ABOUT</p>
+          <h2 class="section-title">关于服务器</h2>
+          <p class="section-desc" id="server-description">这里是一段服务器简介，请修改 data/server.json。</p>
+        </header>
+
+        <div class="about-grid">
+          <div>
+            <p class="about-lead">
+              <strong id="site-name-about">DoctorIDD</strong>
+              是一个由玩家共同建设的 Minecraft 服务器，定位为
+              <strong id="server-type">原版生存 / 生电</strong>。
+            </p>
+            <ul class="about-features" id="features-list"></ul>
+
+            <div class="quick-links" id="quick-links">
+              <p style="color: var(--ink-muted);">快捷链接加载中…</p>
+            </div>
+          </div>
+
+          <article class="server-card">
+            <div class="server-card__head">
+              <span class="server-card__label">// SERVER STATUS</span>
+              <span class="status-pill is-loading" id="status-pill" role="status">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span id="status-text">检测中</span>
+              </span>
+            </div>
+
+            <dl class="server-meta">
+              <div class="server-row">
+                <dt>游戏版本</dt>
+                <dd id="server-version">1.20.1</dd>
+              </div>
+              <div class="server-row">
+                <dt>在线人数</dt>
+                <dd class="server-players" id="server-players"><span>—</span></dd>
+              </div>
+              <div class="server-row">
+                <dt>开放时段</dt>
+                <dd id="server-open-hours">8:30~23:57</dd>
+              </div>
+            </dl>
+
+            <p class="server-notice" id="server-notice"></p>
+            <button class="refresh-btn" type="button">刷新状态</button>
+          </article>
+        </div>
+
+        <div class="server-card addresses-card">
+          <div class="server-card__head">
+            <span class="server-card__label">// CONNECTIONS 连接地址</span>
+          </div>
+          <table class="addresses-table">
+            <thead>
+              <tr>
+                <th>IP</th>
+                <th>来源</th>
+                <th>节点地址</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody id="addresses-body">
+              <tr><td colspan="3" style="color: var(--ink-muted);">连接地址加载中…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--about" id="announcements">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow">// 02 ANNOUNCE</p>
+          <h2 class="section-title">公告</h2>
+          <p class="section-desc">服务器动态、活动与维护通知。</p>
+        </header>
+        <div class="announcements-list" id="announcements-list" aria-live="polite" aria-busy="true">
+          <p style="color: var(--ink-muted);">公告加载中…</p>
+        </div>
+        <div class="announcements-more">
+          <a class="btn btn--ghost" href="/changelog/">更新历史 Changelog →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="members">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow">// 03 MEMBERS</p>
+          <h2 class="section-title">成员墙</h2>
+          <p class="section-desc">一起建设服务器的玩家们。</p>
+        </header>
+        <div class="members-grid" id="members-grid">
+          <p style="color: var(--ink-muted); grid-column: 1 / -1;">成员加载中…</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--about" id="projects">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow">// 04 PROJECTS</p>
+          <h2 class="section-title">项目 / 社区组件</h2>
+          <p class="section-desc">服务器使用的开源组件与社区项目。</p>
+        </header>
+        <div class="projects-grid" id="projects-grid">
+          <p style="color: var(--ink-muted); grid-column: 1 / -1;">项目加载中…</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="rules">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow">// 05 RULES</p>
+          <h2 class="section-title">规则与加入</h2>
+        </header>
+        <div class="rules-summary" id="rules-summary">
+          <div>
+            <h3>规则与加入</h3>
+            <p>规则加载中…</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>
+        <p class="site-footer__logo" id="footer-brand">DoctorIDD</p>
+        <p class="site-footer__tagline" id="footer-tagline">欢迎来到 DoctorIDD 服务器</p>
+      </div>
+      <nav class="site-footer__col" aria-label="社区">
+        <p class="site-footer__head">// 社区</p>
+        <div id="footer-community"></div>
+      </nav>
+      <nav class="site-footer__col" aria-label="站点">
+        <p class="site-footer__head">// 站点</p>
+        <a href="/">首页</a>
+        <a href="/changelog/">更新历史</a>
+        <a href="/rules/">规则</a>
+        <a href="/plugins/">组件</a>
+      </nav>
+      <nav class="site-footer__col" aria-label="服务器">
+        <p class="site-footer__head">// 服务器</p>
+        <span class="font-mono" id="footer-address">doctoridd.net</span>
+        <a href="mailto:" id="footer-email">you@example.com</a>
+      </nav>
+    </div>
+    <div class="container site-footer__bar">
+      <span id="footer-copyright">© DoctorIDD · All rights reserved.</span>
+      <span>Cloudflare Pages</span>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="back-to-top" type="button" aria-label="返回顶部" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+      <path d="M12 19V5M6 11l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <script src="/assets/js/announcements.js?v=20261002"></script>
+  <script src="/assets/js/app.js?v=20261002"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+[
+  {
+    "source": "樱花FRP线路（VIP专线）",
+    "node": "浙江宁波",
+    "statusHost": "frp-sun.com",
+    "statusPort": 31067
+  },
+  {
+    "source": "樱花FRP线路（VIP专线）",
+    "node": "湖北",
+    "statusHost": "frp-day.com",
+    "statusPort": 59452
+  },
+  {
+    "source": "樱花FRP线路（VIP专线）",
+    "node": "山东枣庄",
+    "statusHost": "frp-ten.com",
+    "statusPort": 11010
+  },
+  {
+    "source": "樱花FRP线路（VIP专线）",
+    "node": "香港",
+    "statusHost": "frp-fit.com",
+    "statusPort": 27251
+  },
+  {
+    "source": "阿里云自建FRP裸IP",
+    "node": "上海",
+    "statusHost": "139.196.54.254",
+    "statusPort": 25565
+  }
+]

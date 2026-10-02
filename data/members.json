@@ -1,0 +1,37 @@
+[
+  {
+    "name": "DoctorIDD",
+    "uuid": "59c6eb4f-1e15-4d8c-8436-6fde26e2c12a",
+    "tier": "owner",
+    "role": "服主",
+    "avatar": "assets/avatars/uuid-59c6eb4f-1e15-4d8c-8436-6fde26e2c12a.png"
+  },
+  {
+    "name": "尼禄不是野兽博士",
+    "uuid": "",
+    "littleSkin": "Nero_Claudius",
+    "tier": "member",
+    "role": "成员"
+  },
+  {
+    "name": "漈",
+    "uuid": "",
+    "littleSkin": "wueer211",
+    "tier": "member",
+    "role": "成员"
+  },
+  {
+    "name": "Nooodle33",
+    "uuid": "",
+    "littleSkin": "Nooodle33",
+    "tier": "member",
+    "role": "成员"
+  },
+  {
+    "name": "呼噜的小番茄",
+    "uuid": "",
+    "littleSkin": "LilacSky26",
+    "tier": "member",
+    "role": "成员"
+  }
+]

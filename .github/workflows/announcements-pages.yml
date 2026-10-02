@@ -1,0 +1,45 @@
+name: Publish announcement data
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/announcements/**'
+      - 'scripts/build-pages.mjs'
+      - '.github/workflows/announcements-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: announcement-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - uses: actions/configure-pages@v5
+      - name: Validate and build announcement data
+        run: node scripts/build-pages.mjs github
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist/github-pages
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy announcement data
+        id: deployment
+        uses: actions/deploy-pages@v4

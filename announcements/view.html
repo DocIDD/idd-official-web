@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>公告 · DoctorIDD</title>
+  <meta name="description" content="DoctorIDD 服务器公告详情。" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="icon" type="image/png" sizes="64x64" href="/assets/images/logo-thumb.png" />
+  <link rel="stylesheet" href="/assets/css/style.css?v=20261002" />
+</head>
+<body data-page="announcement">
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="site-brand" href="/"><span id="site-brand">DoctorIDD</span></a>
+      <nav class="site-nav" id="site-nav" aria-label="主导航">
+        <a href="/#about">介绍</a>
+        <a href="/#announcements">公告</a>
+        <a href="/#members">成员</a>
+        <a href="/#projects">项目</a>
+        <a href="/#rules">规则</a>
+        <a href="/plugins/">组件</a>
+        <a href="/changelog/">更新历史</a>
+      </nav>
+      <div class="site-header__actions">
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换深色模式">🌙</button>
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="rules-page">
+    <div class="container">
+      <nav class="rules-nav" aria-label="页面导航">
+        <a class="rules-nav__back" href="/">← 返回首页</a>
+        <a class="rules-nav__back" href="/changelog/">查看全部公告 / Changelog →</a>
+      </nav>
+
+      <header class="rules-head announcement-detail-head">
+        <p class="section-eyebrow">// ANNOUNCEMENT</p>
+        <h1 id="announcement-detail-title">公告加载中…</h1>
+        <p class="announcement-detail-date font-mono" id="announcement-detail-date"></p>
+      </header>
+
+      <section class="rules-block announcement-detail" aria-label="公告正文">
+        <div id="announcement-detail-content">
+          <p style="color: var(--ink-muted);">公告加载中…</p>
+        </div>
+        <div id="announcement-detail-images" class="announcement-detail-images"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__bar">
+      <span>© DoctorIDD · All rights reserved.</span>
+      <a href="/">返回首页</a>
+    </div>
+  </footer>
+
+  <script src="/assets/js/announcements.js?v=20261002"></script>
+  <script src="/assets/js/app.js?v=20261002"></script>
+</body>
+</html>

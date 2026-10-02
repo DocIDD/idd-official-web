@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>规则与加入 · DoctorIDD</title>
+  <meta name="description" content="DoctorIDD Minecraft 服务器规则、加入流程与免责说明。" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="icon" type="image/png" sizes="64x64" href="/assets/images/logo-thumb.png" />
+  <link rel="stylesheet" href="/assets/css/style.css?v=20261002" />
+</head>
+<body data-page="rules">
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="site-brand" href="/"><span id="site-brand">DoctorIDD</span></a>
+      <nav class="site-nav" id="site-nav" aria-label="主导航">
+        <a href="/#about">介绍</a>
+        <a href="/#announcements">公告</a>
+        <a href="/#members">成员</a>
+        <a href="/#projects">项目</a>
+        <a href="/#rules">规则</a>
+        <a href="/plugins/">组件</a>
+        <a href="/changelog/">更新历史</a>
+      </nav>
+      <div class="site-header__actions">
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换深色模式">🌙</button>
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="rules-page">
+    <div class="container">
+      <nav class="rules-nav" aria-label="页面导航">
+        <a class="rules-nav__back" href="/">← 返回首页</a>
+      </nav>
+
+      <header class="rules-head">
+        <p class="section-eyebrow">// RULES 内页</p>
+        <h1>规则与加入</h1>
+        <p class="section-desc" id="rules-version">规则版本加载中…</p>
+      </header>
+
+      <div class="rules-layout">
+        <section class="rules-block" aria-label="服务器规则全文">
+          <h2>服务器规则</h2>
+          <ul class="rules-list" id="rules-list">
+            <li class="rule-item"><span class="rule-num">…</span><span>规则加载中…</span></li>
+          </ul>
+        </section>
+
+        <aside>
+          <section class="rules-block" aria-label="加入流程">
+            <h2>加入流程</h2>
+            <ol class="steps" id="join-steps">
+              <li class="step"><span class="step__idx">01</span><div><div class="step__name">加载中…</div></div></li>
+            </ol>
+          </section>
+
+          <section class="rules-block" aria-label="审核须知">
+            <h2>审核须知</h2>
+            <ul class="notes" id="review-notes">
+              <li>加载中…</li>
+            </ul>
+          </section>
+
+          <section class="rules-block" aria-label="免责说明">
+            <h2>免责说明</h2>
+            <ul class="notes" id="disclaimer-notes">
+              <li>加载中…</li>
+            </ul>
+          </section>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__bar">
+      <span>© DoctorIDD · All rights reserved.</span>
+      <a href="/">返回首页</a>
+    </div>
+  </footer>
+
+  <script src="/assets/js/announcements.js?v=20261002"></script>
+  <script src="/assets/js/app.js?v=20261002"></script>
+</body>
+</html>

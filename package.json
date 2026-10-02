@@ -1,0 +1,13 @@
+{
+  "name": "doctoridd-website",
+  "private": true,
+  "scripts": {
+    "dev": "node dev-server.mjs",
+    "preview": "npm run build && node scripts/preview-pages.mjs",
+    "build": "node scripts/build-pages.mjs",
+    "build:cloudflare": "node scripts/build-pages.mjs cloudflare",
+    "build:announcements": "node scripts/build-pages.mjs github",
+    "deploy:cloudflare": "npm run build:cloudflare && npx wrangler pages deploy dist/cloudflare --project-name doctoridd --branch=main",
+    "test": "node --test tests/*.test.mjs"
+  }
+}

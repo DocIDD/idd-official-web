@@ -1,0 +1,20 @@
+[
+  {
+    "id": "server-announcement",
+    "file": "server-announcement.json",
+    "date": "2026-08-21",
+    "title": "服务器公告",
+    "sticky": true,
+    "showOnHome": true,
+    "summary": "欢迎来到IDDの小窝，祝你玩的开心喵 香草纪元:食旅纪行 v2.7.1整合包"
+  },
+  {
+    "id": "example-2",
+    "file": "example-2.json",
+    "date": "2026-08-01",
+    "title": "示例公告二",
+    "sticky": false,
+    "showOnHome": true,
+    "summary": "第二条公告占位内容。"
+  }
+]

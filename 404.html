@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 · DoctorIDD</title>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="icon" type="image/png" sizes="64x64" href="/assets/images/logo-thumb.png" />
+  <link rel="stylesheet" href="/assets/css/style.css?v=20261002" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="site-brand" href="/"><span id="site-brand">DoctorIDD</span></a>
+      <nav class="site-nav" id="site-nav" aria-label="主导航">
+        <a href="/#about">介绍</a>
+        <a href="/#announcements">公告</a>
+        <a href="/#members">成员</a>
+        <a href="/#projects">项目</a>
+        <a href="/#rules">规则</a>
+        <a href="/plugins/">组件</a>
+        <a href="/changelog/">更新历史</a>
+      </nav>
+      <div class="site-header__actions">
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换深色模式">🌙</button>
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main style="min-height: 70vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2rem;">
+    <div>
+      <h1 style="font-family: var(--font-display); font-size: 4rem; color: var(--accent);">404</h1>
+      <p style="color: var(--ink-secondary); margin: 1rem 0 2rem;">页面不存在或已被移动。</p>
+      <a class="btn btn--primary" href="/">返回首页</a>
+    </div>
+  </main>
+
+  <script src="/assets/js/announcements.js?v=20261002"></script>
+  <script src="/assets/js/app.js?v=20261002"></script>
+</body>
+</html>

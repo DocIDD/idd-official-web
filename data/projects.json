@@ -1,0 +1,16 @@
+[
+  {
+    "name": "AI站",
+    "author": "DoctorIDD & Ollama",
+    "description": "基于Open WebUI制作的AI站",
+    "url": "https://ai.doctoridd.net",
+    "icon": "🖥"
+  },
+  {
+    "name": "自建网盘",
+    "author": "DoctorIDD & OpenList Dev",
+    "description": "云服务器部署的网盘",
+    "url": "https://pan.doctoridd.net",
+    "icon": "🖴"
+  }
+]

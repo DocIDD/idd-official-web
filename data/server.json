@@ -1,0 +1,28 @@
+{
+  "name": "IDDの小窝",
+  "shortName": "IDD",
+  "hostname": "doctoridd.net",
+  "statusHost": "139.196.54.254",
+  "port": 25565,
+  "address": "",
+  "version": "香草纪元:食旅纪行 v2.7.1",
+  "type": "模组生存 / 休闲",
+  "slogan": "欢迎来到 DoctorIDD 服务器",
+  "description": "🎉香草纪元:食旅纪行 v2.7.1🎉\n服务器第1周目",
+  "features": [
+    "整合包",
+    "休闲娱乐向",
+    "社区共建",
+    "长期运营"
+  ],
+  "foundationDate": "2026-06-26",
+  "openHours": "8:30~23:57",
+  "maintenance": false,
+  "maintenanceNotice": "服务器维护中，恢复时间群内公告",
+  "statusApi": "https://api.mcsrvstat.us/3/",
+  "joinQQ": "请填写QQ群号",
+  "contactEmail": "3032639199@qq.com",
+  "communityLinks": [
+    { "label": "OOPZ 域", "url": "https://oopz.cn/i/de6p2x" }
+  ]
+}

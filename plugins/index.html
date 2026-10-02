@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>服务器组件 · DoctorIDD</title>
+  <meta name="description" content="DoctorIDD Minecraft 服务器组件、插件与开源项目。" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="icon" type="image/png" sizes="64x64" href="/assets/images/logo-thumb.png" />
+  <link rel="stylesheet" href="/assets/css/style.css?v=20261002" />
+</head>
+<body data-page="plugins">
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="site-brand" href="/"><span id="site-brand">DoctorIDD</span></a>
+      <nav class="site-nav" id="site-nav" aria-label="主导航">
+        <a href="/#about">介绍</a>
+        <a href="/#announcements">公告</a>
+        <a href="/#members">成员</a>
+        <a href="/#projects">项目</a>
+        <a href="/#rules">规则</a>
+        <a href="/plugins/">组件</a>
+        <a href="/changelog/">更新历史</a>
+      </nav>
+      <div class="site-header__actions">
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换深色模式">🌙</button>
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="rules-page">
+    <div class="container">
+      <nav class="rules-nav" aria-label="页面导航">
+        <a class="rules-nav__back" href="/">← 返回首页</a>
+      </nav>
+
+      <header class="rules-head">
+        <p class="section-eyebrow">// PLUGINS 组件</p>
+        <h1>服务器组件</h1>
+        <p class="section-desc">服务器使用的组件、插件与开源项目，内容由 data/projects.json 管理。</p>
+      </header>
+
+      <section class="rules-block" aria-label="服务器信息">
+        <h2>运行环境</h2>
+        <dl class="server-meta">
+          <div class="server-row">
+            <dt>服务器地址</dt>
+            <dd class="mono" id="server-address">doctoridd.net</dd>
+          </div>
+          <div class="server-row">
+            <dt>游戏版本</dt>
+            <dd id="server-version">1.20.1</dd>
+          </div>
+          <div class="server-row">
+            <dt>服务器类型</dt>
+            <dd id="server-type">原版生存 / 生电</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="rules-block" aria-label="项目列表">
+        <h2>项目 / 开源组件</h2>
+        <div class="projects-grid" id="projects-grid">
+          <p style="color: var(--ink-muted); grid-column: 1 / -1;">项目加载中…</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__bar">
+      <span>© DoctorIDD · All rights reserved.</span>
+      <a href="/">返回首页</a>
+    </div>
+  </footer>
+
+  <script src="/assets/js/announcements.js?v=20261002"></script>
+  <script src="/assets/js/app.js?v=20261002"></script>
+</body>
+</html>
