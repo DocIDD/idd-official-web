@@ -6,6 +6,7 @@ on:
     paths:
       - 'data/announcements/**'
       - 'scripts/build-pages.mjs'
+      - 'assets/js/announcement-format.js'
       - '.github/workflows/announcements-pages.yml'
   workflow_dispatch:
 

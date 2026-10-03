@@ -835,8 +835,27 @@ button {
 
 .announcement-detail #announcement-detail-content {
   color: var(--ink-secondary);
-  white-space: pre-line;
+  white-space: normal;
 }
+
+.announcement-text { overflow-wrap: anywhere; }
+.announcement-detail #announcement-detail-content > * + * { margin-top: 1.5rem; }
+.announcement-image-original { display: block; text-align: center; font-size: 0.8rem; margin-top: 0.5rem; color: var(--link); }
+.announcement-media-note { padding: 1rem; border: 1px dashed var(--line-strong); border-radius: var(--radius-sm); color: var(--ink-secondary); }
+.announcement-player { overflow: hidden; min-width: 0; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--bg); }
+.announcement-player-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 1rem 1.25rem; }
+.announcement-player-head strong { color: var(--ink); overflow-wrap: anywhere; }
+.announcement-player-head span { color: var(--ink-muted); font-size: 0.8rem; flex-shrink: 0; }
+.announcement-player-stage { position: relative; width: 100%; aspect-ratio: 16 / 9; background: var(--bg-deep); }
+.announcement-player-stage.is-fixed-height { aspect-ratio: auto; height: var(--player-height); min-height: 90px; }
+.announcement-player-stage iframe { display: block; width: 100%; height: 100%; border: 0; background: #fff; }
+.announcement-player-load { width: 100%; height: 100%; display: flex; gap: 0.85rem; justify-content: center; align-items: center; color: var(--accent); background: var(--accent-tint); }
+.announcement-player-load:hover { background: var(--line); }
+.announcement-play-icon { display: grid; place-items: center; height: 40px; width: 40px; border: 1px solid var(--line-strong); border-radius: 50%; font-size: 0.85rem; }
+.announcement-player-original { display: block; color: var(--link); padding: 0.75rem 1.25rem; font-size: 0.85rem; }
+.announcement-native-player { display: block; width: 100%; max-width: 100%; }
+video.announcement-native-player { aspect-ratio: 16 / 9; background: #000; }
+audio.announcement-native-player { padding: 0 1rem; box-sizing: border-box; margin-bottom: 0.5rem; }
 
 .announcement-detail #announcement-detail-content a {
   color: var(--link);

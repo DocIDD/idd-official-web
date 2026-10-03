@@ -1,6 +1,7 @@
 import { cp, mkdir, readFile, readdir, rm, writeFile, lstat, realpath } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import AnnouncementFormat from "../assets/js/announcement-format.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const target = process.argv[2] || "all";
@@ -24,6 +25,8 @@ async function validateAnnouncements() {
     if (detail.id !== meta.id || typeof detail.title !== "string" || typeof detail.content !== "string") {
       throw new Error(`公告正文无效：${file}`);
     }
+    try { AnnouncementFormat.validateMedia(detail); }
+    catch (error) { throw new Error(`${file}：${error.message}`); }
   }
 }
 

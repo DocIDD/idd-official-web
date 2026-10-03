@@ -3,18 +3,18 @@
     "id": "server-announcement",
     "file": "server-announcement.json",
     "date": "2026-08-21",
-    "title": "服务器公告",
-    "sticky": true,
-    "showOnHome": true,
+    "title": "香草纪元:食旅纪行 第1周目 🎉",
+    "sticky": false,
+    "showOnHome": false,
     "summary": "欢迎来到IDDの小窝，祝你玩的开心喵 香草纪元:食旅纪行 v2.7.1整合包"
   },
   {
-    "id": "example-2",
-    "file": "example-2.json",
-    "date": "2026-08-01",
-    "title": "示例公告二",
-    "sticky": false,
+    "id": "season-2",
+    "file": "server-season-2.json",
+    "date": "2026-10-03",
+    "title": "Urban Tale 都市物语 第②周目 🎉",
+    "sticky": true,
     "showOnHome": true,
-    "summary": "第二条公告占位内容。"
+    "summary": "欢迎来到IDDの小窝，祝你玩的开心喵 Urban Tale 都市物语 -v0.85整合包"
   }
 ]

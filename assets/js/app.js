@@ -465,6 +465,95 @@ function renderAnnouncementContent(content, maxLines = Infinity) {
   return html;
 }
 
+async function renderAnnouncementImage(image) {
+  const url = await window.AnnouncementSource.imageUrl(typeof image === "string" ? image : image?.url);
+  const alt = typeof image === "string" ? "" : image?.alt || "";
+  if (!url) return '<p class="announcement-media-note">图片地址无效。</p>';
+  return `<figure class="announcement-image"><img src="${escapeHTML(url)}" alt="${escapeHTML(alt)}" loading="lazy" decoding="async">${alt ? `<figcaption>${escapeHTML(alt)}</figcaption>` : ""}<a class="announcement-image-original" href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">打开原图 ↗</a></figure>`;
+}
+
+async function renderAnnouncementPlayer(item) {
+  try {
+    const type = item?.type || "iframe";
+    const input = ["audio", "video"].includes(type)
+      ? { ...item, url: await window.AnnouncementSource.imageUrl(item.url) }
+      : item;
+    const player = window.AnnouncementFormat.normalizePlayer(input);
+    if (player.type === "iframe" && new URL(player.url).origin === location.origin) throw new Error("外置播放器需要使用独立来源的地址");
+    const title = escapeHTML(player.title);
+    let body;
+    if (player.type === "audio" || player.type === "video") {
+      const tag = player.type;
+      const poster = tag === "video" && item.poster ? await window.AnnouncementSource.imageUrl(item.poster) : "";
+      body = `<${tag} class="announcement-native-player" controls preload="none" ${tag === "video" ? "playsinline" : ""} ${poster ? `poster="${escapeHTML(poster)}"` : ""} src="${escapeHTML(player.url)}" aria-label="${title}"></${tag}>`;
+    } else {
+      const fixed = player.layout === "audio" || player.fixedHeight;
+      body = `<div class="announcement-player-stage ${fixed ? "is-fixed-height" : ""}" style="--player-height:${player.height}px"><button class="announcement-player-load" type="button" data-player-src="${escapeHTML(player.url)}" data-player-title="${title}"><span class="announcement-play-icon" aria-hidden="true">▶</span><span>加载${player.layout === "audio" ? "音乐" : "视频"}播放器</span></button></div>`;
+    }
+    return `<section class="announcement-player" aria-label="${title}"><div class="announcement-player-head"><strong>${title}</strong><span>${escapeHTML(player.provider)}</span></div>${body}<a class="announcement-player-original" href="${escapeHTML(player.originalUrl)}" target="_blank" rel="noopener noreferrer">在原站打开 ↗</a></section>`;
+  } catch (error) {
+    return `<p class="announcement-media-note">播放器无法插入：${escapeHTML(error.message)}</p>`;
+  }
+}
+
+async function renderAnnouncementRichContent(content) {
+  const tokens = window.AnnouncementFormat.parse(content);
+  const output = [];
+  let text = "";
+  const flush = () => {
+    const trimmed = text.replace(/^(<br>)+|(<br>)+$/g, "");
+    if (trimmed.trim()) output.push(`<div class="announcement-text">${trimmed}</div>`);
+    text = "";
+  };
+  for (const token of tokens) {
+    if (token.type === "text") text += autoLinkLine(token.text).replace(/\n/g, "<br>");
+    else if (token.type === "link") {
+      const url = await window.AnnouncementSource.imageUrl(token.url);
+      text += url ? `<a href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(token.title || token.url)}</a>` : escapeHTML(token.raw);
+    } else {
+      flush();
+      output.push(token.type === "image"
+        ? await renderAnnouncementImage({ url: token.url, alt: token.title })
+        : await renderAnnouncementPlayer({ url: token.url, title: token.title }));
+    }
+  }
+  flush();
+  return output.join("");
+}
+
+function initAnnouncementMedia(root) {
+  root.querySelectorAll(".announcement-player-load").forEach((button) => {
+    button.addEventListener("click", () => {
+      const frame = document.createElement("iframe");
+      frame.title = button.dataset.playerTitle;
+      frame.src = button.dataset.playerSrc;
+      frame.setAttribute("sandbox", "allow-scripts allow-same-origin allow-presentation");
+      frame.setAttribute("allow", "fullscreen; encrypted-media; picture-in-picture");
+      frame.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
+      frame.setAttribute("allowfullscreen", "");
+      button.replaceWith(frame);
+    }, { once: true });
+  });
+  root.querySelectorAll(".announcement-image img").forEach((image) => {
+    const failed = () => {
+      const note = document.createElement("p");
+      note.className = "announcement-media-note";
+      note.textContent = "图片暂时无法加载，可以尝试打开原图。";
+      image.replaceWith(note);
+    };
+    image.addEventListener("error", failed, { once: true });
+    if (image.complete && image.naturalWidth === 0) failed();
+  });
+  root.querySelectorAll(".announcement-native-player").forEach((media) => {
+    media.addEventListener("error", () => {
+      const note = document.createElement("p");
+      note.className = "announcement-media-note";
+      note.textContent = "媒体暂时无法播放，可以尝试在原站打开。";
+      media.replaceWith(note);
+    }, { once: true });
+  });
+}
+
 async function loadAnnouncementIndex() {
   return window.AnnouncementSource.loadIndex();
 }
@@ -497,7 +586,11 @@ function sortAnnouncements(items, stickyFirst = false) {
 
 function renderAnnouncementSummary(summary) {
   if (!summary) return "";
-  return autoLinkLine(summary).replace(/\n/g, "<br>");
+  return window.AnnouncementFormat.parse(summary).map((token) => {
+    if (token.type === "text") return autoLinkLine(token.text);
+    if (token.type === "link" && /^https?:\/\//i.test(token.url)) return `<a href="${escapeHTML(token.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(token.title || token.url)}</a>`;
+    return escapeHTML(token.title || "");
+  }).join("").replace(/\n/g, "<br>");
 }
 
 async function renderAnnouncements() {
@@ -545,6 +638,8 @@ async function renderAnnouncementDetail() {
     return;
   }
   announcementLoading(contentEl);
+  const imagesEl = el("announcement-detail-images");
+  if (imagesEl) imagesEl.innerHTML = "";
   try {
     const index = await loadAnnouncementIndex();
     const meta = index.find((item) => item.id === id);
@@ -561,25 +656,17 @@ async function renderAnnouncementDetail() {
 
     setHTML(
       "announcement-detail-content",
-      renderAnnouncementContent(data.content, Infinity)
+      await renderAnnouncementRichContent(data.content)
     );
 
-    const imagesEl = el("announcement-detail-images");
-    if (imagesEl && Array.isArray(data.images)) {
-      imagesEl.innerHTML = (await Promise.all(data.images
-        .map(async (img) => {
-          const url = await window.AnnouncementSource.imageUrl(typeof img === "string" ? img : img?.url);
-          const alt = typeof img === "string" ? "" : img?.alt || "";
-          if (!url) return "";
-          return `
-            <figure class="announcement-image">
-              <img src="${escapeHTML(url)}" alt="${escapeHTML(alt)}" loading="lazy" decoding="async">
-              ${alt ? `<figcaption>${escapeHTML(alt)}</figcaption>` : ""}
-            </figure>
-          `;
-        })))
-        .join("");
+    if (imagesEl) {
+      imagesEl.innerHTML = (await Promise.all([
+        ...(Array.isArray(data.images) ? data.images : []).map(renderAnnouncementImage),
+        ...(Array.isArray(data.players) ? data.players : []).map(renderAnnouncementPlayer)
+      ])).join("");
     }
+    initAnnouncementMedia(contentEl);
+    if (imagesEl) initAnnouncementMedia(imagesEl);
   } catch (err) {
     setText("announcement-detail-title", "公告暂时无法加载");
     announcementError(contentEl, renderAnnouncementDetail);
