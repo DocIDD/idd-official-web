@@ -2,6 +2,7 @@
   "name": "doctoridd-website",
   "private": true,
   "scripts": {
+    "editor": "node scripts/editor-server.mjs",
     "dev": "node dev-server.mjs",
     "preview": "npm run build && node scripts/preview-pages.mjs",
     "build": "node scripts/build-pages.mjs",

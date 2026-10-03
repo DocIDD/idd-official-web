@@ -1,4 +1,5 @@
 dist/
+.editor-backups/
 node_modules/
 .wrangler/
 __pycache__/
