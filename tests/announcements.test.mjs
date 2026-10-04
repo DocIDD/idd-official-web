@@ -6,6 +6,7 @@ import { execFileSync } from "node:child_process";
 
 const loader = await readFile(new URL("../assets/js/announcements.js", import.meta.url), "utf8");
 const app = await readFile(new URL("../assets/js/app.js", import.meta.url), "utf8");
+const format = await readFile(new URL("../assets/js/announcement-format.js", import.meta.url), "utf8");
 const meta = { id: "news", file: "news.json", title: "活动公告", date: "2026-10-02", summary: "新的旅程", showOnHome: true };
 const detail = { ...meta, content: "第一行\nhttps://example.com/?a=1&b=2", images: [] };
 
@@ -26,6 +27,7 @@ function environment({ hostname = "doctoridd.pages.dev", base = "https://docidd.
     }
   });
   context.window = context;
+  vm.runInContext(format, context);
   vm.runInContext(loader, context);
   vm.runInContext(app, context);
   return { api: context.AnnouncementSource, calls, context, nodes };
@@ -78,6 +80,54 @@ test("malformed indexes, duplicate IDs, unsafe paths and HTTP production sources
   await assert.rejects(environment({ index: [meta, meta] }).api.loadIndex(), /条目无效/);
   await assert.rejects(environment({ index: [{ ...meta, file: "../server.json" }] }).api.loadIndex(), /文件名无效/);
   await assert.rejects(environment({ base: "http://example.com/" }).api.loadIndex(), /HTTPS/);
+});
+
+test("a broken primary source falls back to the next base url", async () => {
+  const config = {
+    announcementsBaseUrl: "https://broken.example/announcements/",
+    announcementsFallbackBaseUrls: ["https://mirror.example/announcements/"],
+    announcementsLocalBaseUrl: "/data/announcements/"
+  };
+  const env = environment({ fetcher: async (url) => {
+    if (url === "/data/site.json") return { ok: true, json: async () => config };
+    if (String(url).startsWith("https://broken.example/")) return { ok: false, status: 503 };
+    return { ok: true, json: async () => String(url).endsWith("index.json") ? [meta] : detail };
+  } });
+  const items = await env.api.loadIndex();
+  assert.equal(items.length, 1);
+  assert.deepEqual(env.calls.map((call) => call.url), [
+    "/data/site.json",
+    "https://broken.example/announcements/index.json",
+    "https://mirror.example/announcements/index.json"
+  ]);
+  // 主源失效时图片也必须走可用的那个源，否则公告能读、图全挂。
+  assert.equal(await env.api.imageUrl("images/event.png"), "https://mirror.example/announcements/images/event.png");
+});
+
+test("when every source fails the error surfaces instead of hanging", async () => {
+  const config = {
+    announcementsBaseUrl: "https://broken.example/a/",
+    announcementsFallbackBaseUrls: ["https://broken.example/b/"],
+    announcementsLocalBaseUrl: "/data/announcements/"
+  };
+  const env = environment({ fetcher: async (url) => {
+    if (url === "/data/site.json") return { ok: true, json: async () => config };
+    return { ok: false, status: 503 };
+  } });
+  await assert.rejects(env.api.loadIndex(), /503/);
+});
+
+test("invalid fallback urls are rejected rather than silently ignored", async () => {
+  const config = {
+    announcementsBaseUrl: "https://ok.example/",
+    announcementsFallbackBaseUrls: ["http://insecure.example/"],
+    announcementsLocalBaseUrl: "/data/announcements/"
+  };
+  const env = environment({ fetcher: async (url) => {
+    if (url === "/data/site.json") return { ok: true, json: async () => config };
+    return { ok: true, json: async () => [meta] };
+  } });
+  await assert.rejects(env.api.loadIndex(), /HTTPS/);
 });
 
 test("reset refreshes configuration and index", async () => {
@@ -153,5 +203,55 @@ test("build separates the main site from announcements and developer files", asy
     const html = await readFile(new URL("../dist/cloudflare/" + file, import.meta.url), "utf8");
     assert.ok(html.indexOf("/assets/js/announcements.js") < html.indexOf("/assets/js/app.js"));
     assert.ok(html.includes("/assets/js/announcements.js"));
+    assert.ok(html.indexOf("/assets/js/announcement-format.js") >= 0);
+    assert.ok(html.indexOf("/assets/js/announcement-format.js") < html.indexOf("/assets/js/app.js"));
   }
+});
+
+test("inline links, images and players preserve order and escape markup", async () => {
+  const env = environment();
+  env.context.richText = '活动 [官网](https://example.com/?a=1&b=2)\n![<海报>](images/event.gif)\n@[背景音乐](https://music.163.com/song?id=347230)\n<script>alert(1)</script>';
+  const html = await vm.runInContext('renderAnnouncementRichContent(richText)', env.context);
+  assert.match(html, /href="https:\/\/example.com\/\?a=1&amp;b=2"[^>]*>官网/);
+  assert.match(html, /src="https:\/\/docidd.github.io\/idd-official-web\/images\/event.gif"/);
+  assert.match(html, /alt="&lt;海报&gt;"/);
+  assert.match(html, /data-player-src="https:\/\/music.163.com\/outchain\/player\?type=2&amp;id=347230&amp;auto=0/);
+  assert.ok(html.indexOf('官网') < html.indexOf('event.gif'));
+  assert.ok(html.indexOf('event.gif') < html.indexOf('背景音乐'));
+  assert.match(html, /&lt;script&gt;/);
+  assert.doesNotMatch(html, /<iframe|<script>/);
+});
+
+test("legacy images and direct media resolve against the GitHub announcement source", async () => {
+  const env = environment();
+  env.context.image = 'images/old.png';
+  assert.match(await vm.runInContext('renderAnnouncementImage(image)', env.context), /idd-official-web\/images\/old.png/);
+  env.context.player = { type:'video', title:'活动录像', url:'media/event.mp4', poster:'images/event.png' };
+  const html = await vm.runInContext('renderAnnouncementPlayer(player)', env.context);
+  assert.match(html, /<video[^>]*controls preload="none"/);
+  assert.match(html, /src="https:\/\/docidd.github.io\/idd-official-web\/media\/event.mp4"/);
+  assert.match(html, /poster="https:\/\/docidd.github.io\/idd-official-web\/images\/event.png"/);
+  assert.doesNotMatch(html, /autoplay/);
+});
+
+test("home summaries include blue links but never load images or frames", () => {
+  const env = environment();
+  env.context.summary = '[详情](https://example.com/) ![活动图](images/event.gif) @[音乐](https://music.163.com/song?id=1)';
+  const html = vm.runInContext('renderAnnouncementSummary(summary)', env.context);
+  assert.match(html, /href="https:\/\/example.com\/"/);
+  assert.doesNotMatch(html, /<img|<iframe|data-player-src/);
+});
+
+test("iframe is created only after click, with its capabilities constrained", () => {
+  const env = environment();
+  let click, inserted;
+  const button = {dataset:{playerTitle:'B站视频',playerSrc:'https://player.bilibili.com/player.html?bvid=BV1B7411m7LV&autoplay=0'}, addEventListener(event, handler) { if(event==='click') click=handler; }, replaceWith(frame){inserted=frame;} };
+  env.context.document.createElement = () => nodeStub();
+  env.context.root = {querySelectorAll(selector){return selector==='.announcement-player-load' ? [button] : [];}};
+  vm.runInContext('initAnnouncementMedia(root)', env.context);
+  assert.equal(inserted, undefined);
+  click();
+  assert.equal(inserted.src, button.dataset.playerSrc);
+  assert.equal(inserted.attributes.sandbox, 'allow-scripts allow-same-origin allow-presentation');
+  assert.doesNotMatch(inserted.attributes.allow, /autoplay/);
 });

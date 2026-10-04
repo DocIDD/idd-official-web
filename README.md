@@ -66,12 +66,23 @@ PORT=9000 node dev-server.mjs
 
 ## 修改内容
 
+### 本地表单编辑器
+
+在项目根目录运行 `npm run editor`，浏览器打开 `http://127.0.0.1:8766`。
+可结构化增删改公告、连接地址、项目、快捷链接、成员、规则、更新日志和服务器配置；列表支持上移、下移。
+点击“保存当前分类”写入本地 `data/` 文件，公告索引与正文自动同步。每次保存前将旧文件备份到 `.editor-backups/`（不提交、不部署）。
+删除公告会从索引移除，保留旧正文文件，便于恢复。其他程序修改文件后，编辑器会拒绝覆盖，需重新加载。
+编辑器仅监听本机地址，无需登录，不会随网站部署。关闭终端或按 Ctrl+C 停止。
+公告正文上方有“插入蓝链”“插入图片 / GIF”“插入网易云播放器”“插入B站播放器”按钮，在光标位置插入内容；播放器支持粘贴完整分享链接或官方 iframe 嵌入代码。
+保存后可另开终端运行 `npm run dev`，在 `http://localhost:8765` 预览。
+公告发布仍需 `npm run build:announcements`，然后提交 `data/announcements/` 并推送；其他主站内容用 `npm run deploy:cloudflare` 发布。
+
 需要修改的内容都在 `data/` 下：
 
 | 文件 | 内容 |
 |---|---|
 | `server.json` | 服务器名称、状态检测目标、版本、维护状态、联系方式等；`statusHost` 为主状态卡实际 Ping 的目标 |
-| `site.json` | `announcementsBaseUrl` 为生产公告源，`announcementsLocalBaseUrl` 为本地预览公告源 |
+| `site.json` | `announcementsBaseUrl` 为生产公告源；`announcementsFallbackBaseUrls` 为备用公告源数组（按顺序回退）；`announcementsMediaBaseUrl` 可选，单独指定图片 / 音视频的源；`announcementsLocalBaseUrl` 为本地预览公告源 |
 | `addresses.json` | 连接地址卡片：展示 IP、来源、节点地址、每个地址的检测目标；展示 IP 由 `statusHost` + `statusPort` 拼接，端口 25565 自动隐藏 |
 | `data/announcements/index.json` + `data/announcements/*.json` | 公告系统。`index.json` 每条包含 `id`、`file`、`date`、`title`、`sticky`、`showOnHome`、`summary`；每个公告单独一个 JSON 文件，含 `content`（换行写 `\n`）和 `images`（图床图片 URL 数组）；正文链接自动变蓝链；首页只展示 `showOnHome`，Changelog 展示全部公告并按时间从新到旧；独立详情页通过 `/announcements/view.html?id=<id>` 访问 |
 | `changelog.json` | 更新历史 Changelog（只放 Minecraft 服务器 / 其他服务的日志，不放官网开发日志） |
@@ -120,8 +131,46 @@ PORT=9000 node dev-server.mjs
 - `images`：图床图片 URL 数组，会显示在公告详情页；
 - 所有公告都会按 `date` 从新到旧出现在 Changelog 页。
 - 首页仅请求索引中的摘要，不逐条下载正文；点击阅读全文时才请求对应公告文件。
-- 正文按纯文本渲染并自动识别 HTTP/HTTPS 链接，HTML 标签不会被执行。
+- 正文支持下方的链接、图片和播放器标记，旧的普通文字与自动 HTTP/HTTPS 蓝链继续可用，HTML 标签不会被执行。
 - 图片可用完整图床 URL，也可用相对公告服务根目录的路径，例如 `images/event.png`。本地图片放到 `data/announcements/images/`，会随公告单独发布。
+
+### 在正文中插入链接、图片与播放器
+
+推荐用本地编辑器的插入按钮，也可以直接在 `content` 中编写以下内容（手写 JSON 时，换行使用 `\n`）：
+
+```text
+报名地址：[点击报名](https://example.com/)
+
+![活动海报](images/event.png)
+![活动动图](images/event.gif)
+
+@[背景音乐](https://music.163.com/song?id=347230)
+@[活动录像](https://www.bilibili.com/video/BV1B7411m7LV/?p=1)
+```
+
+- 图片保持原格式，GIF、动态 WebP、APNG 可以直接展示；图片说明显示在下方，附有“打开原图”入口。
+- 网易云支持歌曲、歌单和专辑的完整链接。编辑器还接受歌曲数字 ID；B站接受 BV 编号、完整视频链接和官方嵌入代码。`b23.tv` 短链接请先打开，再复制完整视频地址。
+- 外置播放器由访客点击加载，不自动播放；网易云使用紧凑高度，B站按 16:9 自适应。是否能够播放取决于平台版权、登录限制与网络情况，卡片提供“在原站打开”。
+- `summary` 也可写 `[文字](https://地址)`，首页仅展示摘要和链接，不加载播放器或图片。
+
+如果希望把媒体统一放在正文后面，可以继续使用 `images`，并增加可选的 `players` 列表，例如：
+
+```json
+{
+  "images": ["images/event.gif", { "url": "images/poster.png", "alt": "活动海报" }],
+  "players": [
+    { "type": "netease", "title": "背景音乐", "url": "https://music.163.com/song?id=347230" },
+    { "type": "bilibili", "title": "活动录像", "url": "https://www.bilibili.com/video/BV1B7411m7LV/" },
+    { "type": "audio", "title": "录音", "url": "media/event.mp3" },
+    { "type": "video", "title": "录像文件", "url": "media/event.mp4", "poster": "images/poster.png" },
+    { "type": "iframe", "title": "其他平台", "url": "https://example.com/embed/video", "height": 360 }
+  ]
+}
+```
+
+直接音视频文件使用浏览器播放控件；相对地址的文件放在 `data/announcements/` 中，随 GitHub Pages 发布。通用 iframe 使用平台提供的 HTTPS 嵌入地址，平台必须允许外部嵌入。编辑器会从 iframe 代码中只提取地址，不执行其中的 HTML 或脚本。
+
+本次新增显示能力后，需要先重新部署一次 Cloudflare 主站，并推送新增的格式脚本与工作流；之后只更新公告文字和媒体文件时，推送公告即可。B站参数依据[官方播放器文档](https://player.bilibili.com/)。
 
 ## 成员头像本地化
 
@@ -231,6 +280,96 @@ https://api.mcsrvstat.us/3/<host>:<port>
 
 这样宁波专线就能由上海服务器检测后返回结果，页面显示“可用 / 在线”。
 
+## 日常更新流程（固定步骤）
+
+本站有**两个互相独立的发布目标**，这是大多数问题的根源，先记住这张表：
+
+| 你改的东西 | 发布到哪里 | 怎么发布 |
+|---|---|---|
+| `data/announcements/**`（公告索引、正文、`images/` 图片） | GitHub Pages 公告源 | **自动**：push 到 `main` 即触发 |
+| `data/` 下其他 JSON（`server` / `projects` / `quicklinks` / `members` / `rules` / `changelog` / `addresses` / `site`） | Cloudflare 主站 | **手动**：`npm run deploy:cloudflare` |
+| HTML、`assets/css/style.css`、`assets/js/*.js` | Cloudflare 主站 | **手动**：`npm run deploy:cloudflare` |
+
+**核心规则**：只有公告是 push 后自动上线的；**其余任何改动都必须手动执行一次 `npm run deploy:cloudflare`，push 不会自动部署主站。**
+
+### 场景 A：只改公告文字（最常见）
+
+```powershell
+npm run editor                     # 打开 http://127.0.0.1:8766，改完点“保存当前分类”
+npm test                           # 可选：确认公告数据合法
+git add data/announcements
+git commit -m "公告：xxx"
+git push                           # 自动触发工作流，1~2 分钟后公告上线
+```
+
+推送后可在这里确认工作流结果：仓库 **Actions → Publish announcement data**。
+
+### 场景 B：公告里要用图片、GIF 或播放器
+
+新增这类内容前，先确认主站已经支持对应渲染（见下方「顺序要求」）。步骤：
+
+1. 把图片放进 `data/announcements/images/`（该目录随公告一起发布）：
+   ```powershell
+   # 例：data/announcements/images/活动海报.jpg
+   ```
+2. `npm run editor` → 公告分类 → 正文上方按钮插入，或用「图片地址 / `images` 字段」。
+   地址**从 `data/announcements/` 开始算，不要加开头的 `/`**：
+   ```
+   images/活动海报.jpg      ✅  → 公告源/images/活动海报.jpg
+   /images/活动海报.jpg     ❌  → 主站根目录，会 404
+   https://图床/图.png      ✅  推荐，最省事
+   ```
+3. 提交并推送（`git add data/announcements && git commit && git push`）。
+
+### 场景 C：改主站内容或样式
+
+改 `data/server.json`、`data/projects.json` 等，或改 HTML / CSS / JS 之后：
+
+```powershell
+npm run dev                        # 先在 http://localhost:8765 本地确认
+npm run deploy:cloudflare          # 部署主站
+git add -A
+git commit -m "xxx"
+git push                           # 让仓库与线上保持一致
+```
+
+### ⚠️ 顺序要求（重要，曾踩过坑）
+
+**如果新增的公告用到了主站还不支持的新写法**（例如第一次使用图片 / 播放器标记），必须**先部署主站、再推公告**：
+
+```powershell
+npm run deploy:cloudflare          # ① 主站先拿到新渲染器
+git push                           # ② 再发布公告内容
+```
+
+反过来做的话，公告会先上线，而主站还没有对应渲染器，页面上会直接显示 `![](images/xx.jpg)`、`@[标题](url)` 这样的原始文字，看起来像坏了。此时补一次 `npm run deploy:cloudflare` 即可恢复，数据没丢。
+
+**同理**：改动 `assets/js/announcement-format.js`、`assets/js/app.js` 后，也要记得部署主站——旧代码配新公告内容会渲染异常。
+
+### 发新公告的完整示例
+
+```powershell
+npm run editor
+# ① 选「服务器公告」→ 新增条目 → 填 id / file / 日期 / 标题 / 正文
+# ② 需要图片就放 data/announcements/images/，正文用 images/文件名.jpg
+# ③ 点「保存当前分类」，看到“已保存”后关掉终端（Ctrl+C）
+
+npm test                           # 确认数据合法
+git add data/announcements
+git commit -m "公告：新增第③周目公告"
+git push
+```
+
+隔 1~2 分钟打开 `https://docidd.github.io/idd-official-web/index.json` 应能看到新公告；再刷新主站首页确认显示正常。
+
+### 常见坑
+
+- **push 了但主站没变** → 正常。主站是手动部署的，执行 `npm run deploy:cloudflare`。
+- **公告图不显示** → 检查地址有没有多写开头的 `/`；确认图片确实提交进了 `data/announcements/images/`。
+- **页面显示 `![](...)` 原始文字** → 主站渲染器没更新，执行 `npm run deploy:cloudflare`。
+- **编辑器保存报错“文件已被其他窗口或程序修改”** → 有别的程序改过文件，点「重新加载」再改。每次保存前会自动备份到 `.editor-backups/`。
+- **删除公告** → 编辑器只从索引移除，正文文件会保留（便于恢复），这是有意设计。
+
 ## 部署到 Cloudflare Pages
 
 ### 1. 首次启用 GitHub Pages 公告服务
@@ -284,6 +423,40 @@ npx wrangler pages deploy dist/cloudflare --project-name doctoridd --branch=main
 公告请求使用 8 秒超时、跨域 GET（不携带凭据）和 HTTP 缓存重新验证。远程失败时显示重试按钮，不会悄悄展示旧的本地公告。
 更换为自定义公告域名后，须确保它允许主站跨域读取 JSON（`Access-Control-Allow-Origin`）；上线后在浏览器确认首页、正文与更新历史均能正常加载。
 公告请求与服务器状态检测并行，因此状态检测缓慢不会阻塞公告。
+
+### 公告源与国内访问回退
+
+`docidd.github.io` 在大陆访问不稳定，因此 `data/site.json` 默认把公告源指向 jsDelivr 的国内镜像，并配置了多条备用源：
+
+```json
+{
+  "announcementsBaseUrl": "https://cdn.jsdmirror.com/gh/DocIDD/idd-official-web@main/data/announcements/",
+  "announcementsFallbackBaseUrls": [
+    "https://cdn.jsdelivr.net/gh/DocIDD/idd-official-web@main/data/announcements/",
+    "https://gh-proxy.com/https://raw.githubusercontent.com/DocIDD/idd-official-web/main/data/announcements/",
+    "https://docidd.github.io/idd-official-web/"
+  ],
+  "announcementsLocalBaseUrl": "/data/announcements/"
+}
+```
+
+规则：
+
+- 这些镜像走的是**仓库路径**（`gh/用户/仓库@分支/…`），不是 `github.io` —— gh-proxy 类公共反代的白名单里没有 `*.github.io`，直接代理 Pages 地址会返回代理首页 HTML。
+- 请求按 `announcementsBaseUrl` → `announcementsFallbackBaseUrls` 顺序尝试，**任一条通即可**；上次成功的源会被记住并优先使用，避免反复等待失效源超时。
+- **图片与音视频会跟随可用的源**，所以主源失效时图不会挂（图片是浏览器直接加载的，无法逐张回退，因此第一次解析时会用体积很小的 `index.json` 探一次可用源）。
+- 全部源都失败时仍会报错并显示「重新加载」按钮，不会静默展示旧内容。
+- 修改公告源后需要 `npm run deploy:cloudflare`（`site.json` 属于主站产物）。
+
+选择源时的注意点：
+
+- 镜像有缓存。实测 `cdn.jsdmirror.com` 返回 `Cache-Control: max-age=300`（约 5 分钟），新公告通常几分钟内可见。
+- 若要**强制立刻刷新**某条镜像的缓存，可调用 jsDelivr 的 purge 接口（公共可用，无需申请）：
+  `https://purge.jsdelivr.net/gh/DocIDD/idd-official-web@main/data/announcements/index.json`
+  对正文文件同理，把路径换成对应 `.json`。
+- 公共反代（gh-proxy 类）随时可能改域名或停服，所以它只作为备用源，**不要单独依赖**。
+- 也可以自建：把公告镜像到自己可控的域名 / CDN 上，填进 `announcementsBaseUrl` 即可，无需改代码。
+
 
 `.gitignore` 已忽略构建产物和 Wrangler 缓存；此前已加入 Git 暂存区的缓存文件仍需在提交前自行取消跟踪。
 发布步骤依据 [GitHub Pages 自定义工作流](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages) 与 [Cloudflare Pages 构建配置](https://developers.cloudflare.com/pages/configuration/build-configuration/)。

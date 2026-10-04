@@ -1,4 +1,9 @@
 {
-  "announcementsBaseUrl": "https://docidd.github.io/idd-official-web/",
+  "announcementsBaseUrl": "https://cdn.jsdmirror.com/gh/DocIDD/idd-official-web@main/data/announcements/",
+  "announcementsFallbackBaseUrls": [
+    "https://cdn.jsdelivr.net/gh/DocIDD/idd-official-web@main/data/announcements/",
+    "https://gh-proxy.com/https://raw.githubusercontent.com/DocIDD/idd-official-web/main/data/announcements/",
+    "https://docidd.github.io/idd-official-web/"
+  ],
   "announcementsLocalBaseUrl": "/data/announcements/"
 }
