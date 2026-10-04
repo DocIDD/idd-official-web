@@ -6,9 +6,15 @@
     "icon": "🧊"
   },
   {
-    "title": "整合包官网",
-    "description": "香草纪元：食旅纪行整合包介绍页",
-    "url": "https://bbsmc.net/modpack/vefc",
+    "title": "整合包宣传片",
+    "description": "Urban Tale 都市物语 -v0.85整合包Bilibili宣传片",
+    "url": "https://www.bilibili.com/video/BV1z7b462EWK",
     "icon": "📦"
+  },
+  {
+    "title": "整合包下载地址",
+    "description": "夸克网盘",
+    "url": "https://pan.quark.cn/s/ed3376bfa109",
+    "icon": "📥"
   }
 ]
